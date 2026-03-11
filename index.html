@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Uji Kompetensi Radiografer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+
+body{
+font-family:Arial;
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+color:white;
+text-align:center;
+padding:20px
+}
+
+.card{
+background:white;
+color:black;
+padding:30px;
+border-radius:12px;
+max-width:700px;
+margin:auto;
+margin-top:30px
+}
+
+button{
+padding:10px 25px;
+border:none;
+border-radius:6px;
+background:#007BFF;
+color:white;
+font-size:16px;
+cursor:pointer
+}
+
+button:hover{
+background:#0056b3
+}
+
+.option{
+display:block;
+padding:10px;
+margin:8px;
+background:#f0f0f0;
+border-radius:6px;
+cursor:pointer
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Uji Kompetensi Radiografer</h1>
+
+<div id="loginBox" class="card">
+
+<h2>Login Peserta</h2>
+
+<input id="nik" placeholder="Masukkan NIK"><br><br>
+<input id="password" type="password" placeholder="Password"><br><br>
+
+<button onclick="login()">Login</button>
+
+</div>
+
+
+<div id="quizBox" class="card" style="display:none">
+
+<h2 id="welcome"></h2>
+
+<div id="questionBox"></div>
+
+</div>
+
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyBNi-964HuljrZfec4oh0hf9gAenVFYNvc",
+authDomain: "uji-kom-79ed4.firebaseapp.com",
+databaseURL: "https://uji-kom-79ed4-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId: "uji-kom-79ed4",
+storageBucket: "uji-kom-79ed4.firebasestorage.app",
+messagingSenderId: "776576175233",
+appId: "1:776576175233:web:99e41e266b8873616cd180"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+
+let currentUser="";
+let currentName="";
+let currentQuestion=0;
+let score=0;
+
+
+const users={
+"201007041":"Lalan Permana Herlambang, A.Md.Rad",
+"200603010":"Feby Fardianto, A.Md.Rad",
+"200903058":"Elis Mandalasari, A.Md.Rad",
+"201706029":"Argo Nur Pujianto",
+"201911092":"Tikha Kania, A.Md.Rad",
+"201506094":"Ipu Yoga Pradetza, A.Md.Rad",
+"201501001":"Sri Cahyati, A.Md.Rad",
+"201011060":"Opan Sopandi, A.Md.Rad",
+"201307041":"Mohamad Vinggih Hernanda, A.Md.Rad",
+"201807083":"Fahmi Puja Ashri, A.Md.Rad",
+"201907052":"Gilang Nurgianti Fadilah, A.Md.Rad",
+"202101209":"Ardi Pratama Oktafiansyah, A.Md.Rad",
+"202207105":"Zhafira Nur Hasanah, A.Md.Rad",
+"202303119":"Dwi Alfi Pramesti, A.Md.Rad",
+"202310276":"Rita Riana, A.Md.Rad",
+"202403156":"Muhammad Rizky Maulana",
+"202411359":"Muhammad Rafi Azhar",
+"202502147":"Dias Riyandi",
+"202507169":"Mochamad Taufik H",
+"202508171":"Arief Maulana",
+"202508172":"Salsa Dea Charira"
+};
+
+
+const questions=[
+
+{
+q:"Seorang pasien laki-laki 45 tahun datang ke IGD dengan keluhan sesak napas dan nyeri dada kanan setelah kecelakaan lalu lintas...",
+options:["Pneumothorax","Hemothorax","Tuberkulosis paru","Pneumonia lobaris","Emfisema"],
+answer:1
+},
+
+{
+q:"Pasien perempuan 30 tahun jatuh dengan tangan menumpu (FOOSH injury)...",
+options:["Ulang wrist AP","Scaphoid view ulnar deviation","Oblique 30°","SID lebih panjang","Gunakan grid"],
+answer:1
+},
+
+{
+q:"Thorax PA menunjukkan clavicula kanan lebih dekat ke vertebra dibanding kiri...",
+options:["Overexposure","Underexposure","Rotasi kanan","Rotasi kiri","Inspirasi kurang"],
+answer:2
+},
+
+{
+q:"Skull Caldwell menunjukkan petrous ridge di bawah orbita...",
+options:["Sudut sinar terlalu besar","Kepala fleksi","Kepala ekstensi","Rotasi kepala","SID pendek"],
+answer:2
+},
+
+{
+q:"Abdomen AP tampak terlalu terang...",
+options:["kVp tinggi","kVp rendah","mAs tinggi","mAs rendah","SID panjang"],
+answer:0
+},
+
+{
+q:"Cervical lateral hanya terlihat C1-C5...",
+options:["kVp tinggi","Swimmer view","Tambah mAs","Grid","Kolimasi"],
+answer:1
+},
+
+{
+q:"Waters view petrous ridge menutupi sinus...",
+options:["Ekstensi","Fleksi","Rotasi","SID pendek","Kolimasi"],
+answer:1
+},
+
+{
+q:"Pelvis AP foramen kanan lebih besar...",
+options:["Rotasi kanan","Rotasi kiri","Tilt anterior","Tilt posterior","OID"],
+answer:1
+},
+
+{
+q:"Thorax PA terlihat 7 posterior ribs...",
+options:["Overexposure","Inspirasi kurang","kVp tinggi","mAs tinggi","Rotasi"],
+answer:1
+},
+
+{
+q:"CT Scan abdomen kontras perlu cek...",
+options:["Hb","Leukosit","Kreatinin","Trombosit","SGOT"],
+answer:2
+}
+
+];
+
+
+
+window.login=async function(){
+
+let nik=document.getElementById("nik").value
+let pass=document.getElementById("password").value
+
+if(nik=="201708073" && pass=="Papamama00"){
+window.location="admin.html"
+return
+}
+
+if(pass!="123"){
+alert("Password salah")
+return
+}
+
+if(!users[nik]){
+alert("NIK tidak terdaftar")
+return
+}
+
+const snapshot=await get(child(ref(db),"result/"+nik))
+
+if(snapshot.exists()){
+alert("Anda sudah pernah mengikuti kuis")
+return
+}
+
+currentUser=nik
+currentName=users[nik]
+
+document.getElementById("loginBox").style.display="none"
+document.getElementById("quizBox").style.display="block"
+
+document.getElementById("welcome").innerHTML="Selamat Datang di Uji Kompetensi Radiologi<br>"+currentName
+
+showQuestion()
+
+}
+
+
+
+function showQuestion(){
+
+if(currentQuestion>=questions.length){
+finishQuiz()
+return
+}
+
+let q=questions[currentQuestion]
+
+let html="<h3>Soal "+(currentQuestion+1)+"</h3>"
+html+="<p>"+q.q+"</p>"
+
+q.options.forEach((opt,i)=>{
+html+=`<div class="option" onclick="answer(${i})">${String.fromCharCode(65+i)}. ${opt}</div>`
+})
+
+document.getElementById("questionBox").innerHTML=html
+
+}
+
+
+
+window.answer=function(i){
+
+if(i==questions[currentQuestion].answer){
+score++
+}
+
+currentQuestion++
+showQuestion()
+
+}
+
+
+
+async function finishQuiz(){
+
+let percent=(score/10)*100
+
+await set(ref(db,"result/"+currentUser),{
+nama:currentName,
+score:percent
+})
+
+let status=percent>=60?"LULUS":"TIDAK LULUS"
+
+document.getElementById("questionBox").innerHTML=
+
+"<h2>Quiz Selesai</h2>"+
+"<h3>Score: "+percent+"</h3>"+
+"<h2>"+status+"</h2>"
+
+}
+
+</script>
+
+</body>
+</html>
