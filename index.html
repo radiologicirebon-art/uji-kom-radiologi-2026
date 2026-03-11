@@ -6,7 +6,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2785/2785544.png">
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
 
@@ -19,12 +23,57 @@ font-family:'Poppins',sans-serif
 
 body{
 background:linear-gradient(135deg,#141E30,#243B55);
+background-size:400% 400%;
+animation:bgmove 12s ease infinite;
 min-height:100vh;
 display:flex;
 align-items:center;
 justify-content:center;
-color:white
+color:white;
+overflow:hidden
 }
+
+@keyframes bgmove{
+0%{background-position:0% 50%}
+50%{background-position:100% 50%}
+100%{background-position:0% 50%}
+}
+
+/* floating bubbles */
+
+.bg-animation{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+overflow:hidden;
+z-index:-1
+}
+
+.bg-animation span{
+position:absolute;
+display:block;
+width:40px;
+height:40px;
+background:rgba(255,255,255,0.1);
+animation:float 20s linear infinite;
+border-radius:50%
+}
+
+.bg-animation span:nth-child(1){left:10%;animation-delay:0s}
+.bg-animation span:nth-child(2){left:20%;animation-delay:5s}
+.bg-animation span:nth-child(3){left:40%;animation-delay:2s}
+.bg-animation span:nth-child(4){left:60%;animation-delay:7s}
+.bg-animation span:nth-child(5){left:80%;animation-delay:3s}
+.bg-animation span:nth-child(6){left:90%;animation-delay:10s}
+
+@keyframes float{
+0%{transform:translateY(100vh) scale(0)}
+100%{transform:translateY(-10vh) scale(1.2)}
+}
+
+/* container */
 
 .container{
 width:100%;
@@ -32,173 +81,171 @@ max-width:420px;
 padding:20px
 }
 
+/* glass card */
+
 .card{
-
-background:rgba(255,255,255,0.1);
-backdrop-filter:blur(10px);
-border-radius:16px;
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(14px);
+border-radius:18px;
 padding:25px;
-box-shadow:0 10px 40px rgba(0,0,0,0.3);
-
+box-shadow:0 15px 45px rgba(0,0,0,0.4);
 animation:fadeUp 0.8s ease
 }
 
 @keyframes fadeUp{
-
-from{
-opacity:0;
-transform:translateY(40px)
+from{opacity:0;transform:translateY(40px)}
+to{opacity:1;transform:translateY(0)}
 }
 
-to{
-opacity:1;
-transform:translateY(0)
-}
-
-}
-
-h1{
-text-align:center;
-margin-bottom:20px
-}
+h1{text-align:center;margin-bottom:20px}
 
 input{
-
 width:100%;
 padding:12px;
 margin-top:10px;
 border:none;
 border-radius:8px;
 font-size:16px
-
 }
 
-button{
+/* button ripple */
 
+button{
 width:100%;
 padding:14px;
 margin-top:15px;
-
-background:#00c6ff;
 background:linear-gradient(45deg,#00c6ff,#0072ff);
-
 border:none;
 border-radius:10px;
 color:white;
 font-size:16px;
 cursor:pointer;
-
-transition:0.3s
-
+overflow:hidden;
+position:relative
 }
 
-button:hover{
-transform:scale(1.05)
+button:after{
+content:"";
+position:absolute;
+width:100px;
+height:100px;
+background:rgba(255,255,255,0.3);
+display:block;
+opacity:0;
+border-radius:50%;
+transform:scale(1);
 }
+
+button:active:after{
+opacity:1;
+transform:scale(3);
+transition:0.5s;
+}
+
+/* option */
 
 .option{
-
 background:white;
 color:black;
-
 padding:12px;
 border-radius:10px;
 margin-top:10px;
-
 cursor:pointer;
-
-transition:0.2s;
-
+transition:0.2s
 }
 
 .option:hover{
-
 transform:scale(1.03);
 background:#e7f1ff
-
 }
 
-.option:active{
-transform:scale(0.95)
-}
+/* progress */
 
 .progress{
-
 height:8px;
 background:#333;
 border-radius:20px;
 margin-top:10px;
 overflow:hidden
-
 }
 
 .progress-bar{
-
 height:8px;
 background:#00c6ff;
-width:0%
+width:0%;
+transition:0.5s
+}
 
+#questionBox{
+transition:0.3s
 }
 
 .question{
-
 margin-top:15px;
 font-size:16px
-
 }
 
 .scoreBox{
-
 text-align:center;
 font-size:20px;
 margin-top:20px
-
 }
 
-.toast{
+/* toast */
 
+.toast{
 position:fixed;
 bottom:30px;
 left:50%;
 transform:translateX(-50%);
-
 background:#000;
 color:white;
-
 padding:12px 20px;
 border-radius:30px;
-
 opacity:0;
 transition:0.4s
-
 }
 
-.toast.show{
-opacity:1
-}
+.toast.show{opacity:1}
+
+/* spinner */
 
 .spinner{
-
 border:5px solid rgba(255,255,255,0.2);
 border-top:5px solid white;
 border-radius:50%;
 width:40px;
 height:40px;
-
 animation:spin 1s linear infinite;
 margin:auto;
 margin-top:10px
-
 }
 
 @keyframes spin{
 to{transform:rotate(360deg)}
 }
 
+/* timer */
+
+#timer{
+margin-top:10px;
+font-size:14px;
+text-align:right
+}
+
 </style>
 </head>
 
 <body>
+
+<div class="bg-animation">
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+</div>
 
 <div class="container">
 
@@ -209,7 +256,6 @@ to{transform:rotate(360deg)}
 <h3>Login Peserta</h3>
 
 <input id="nik" placeholder="Masukkan NIK">
-
 <input id="password" type="password" placeholder="Password">
 
 <button onclick="login()">Masuk</button>
@@ -217,7 +263,6 @@ to{transform:rotate(360deg)}
 <div id="loading"></div>
 
 </div>
-
 
 <div id="quizBox" class="card" style="display:none">
 
@@ -227,6 +272,8 @@ to{transform:rotate(360deg)}
 <div id="bar" class="progress-bar"></div>
 </div>
 
+<div id="timer"></div>
+
 <div id="questionBox"></div>
 
 </div>
@@ -235,6 +282,7 @@ to{transform:rotate(360deg)}
 
 <div id="toast" class="toast"></div>
 
+<audio id="clickSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3"></audio>
 
 <script type="module">
 
@@ -256,17 +304,33 @@ let currentQuestion=0
 let score=0
 
 function toast(msg){
-
 let t=document.getElementById("toast")
 t.innerText=msg
 t.classList.add("show")
-
 setTimeout(()=>t.classList.remove("show"),2500)
-
 }
 
-const users={
+/* timer */
 
+let time=600
+
+setInterval(()=>{
+
+let m=Math.floor(time/60)
+let s=time%60
+
+document.getElementById("timer").innerHTML=
+"Waktu: "+m+":"+String(s).padStart(2,'0')
+
+time--
+
+if(time<=0){
+finishQuiz()
+}
+
+},1000)
+
+const users={
 "201007041":"Lalan Permana Herlambang",
 "200603010":"Feby Fardianto",
 "200903058":"Elis Mandalasari",
@@ -288,49 +352,33 @@ const users={
 "202507169":"Taufik",
 "202508171":"Arief Maulana",
 "202508172":"Salsa Dea"
-
 }
 
-
 const questions=[
-
 {q:"Diagnosis radiologis paling mungkin pada opasitas hemithorax bawah?",o:["Pneumothorax","Hemothorax","TB","Pneumonia","Emfisema"],a:1},
-
 {q:"Kasus FOOSH suspected scaphoid?",o:["AP ulang","Scaphoid view","Oblique","SID","Grid"],a:1},
-
 {q:"Clavicula kanan lebih dekat vertebra?",o:["Over","Under","Rotasi kanan","Rotasi kiri","Inspirasi"],a:2},
-
 {q:"Petrous ridge bawah orbita Caldwell?",o:["Sudut besar","Fleksi","Ekstensi","Rotasi","SID"],a:2},
-
 {q:"Abdomen terlalu terang?",o:["kVp tinggi","kVp rendah","mAs tinggi","mAs rendah","SID"],a:0},
-
 {q:"C1-C5 saja?",o:["kVp","Swimmer","mAs","Grid","Kolimasi"],a:1},
-
 {q:"Waters petrous menutup sinus?",o:["Ekstensi","Fleksi","Rotasi","SID","Kolimasi"],a:1},
-
 {q:"Foramen kanan besar?",o:["Rot kanan","Rot kiri","Tilt","Tilt","OID"],a:1},
-
 {q:"Thorax 7 ribs?",o:["Over","Inspirasi kurang","kVp","mAs","Rotasi"],a:1},
-
 {q:"CT kontras cek?",o:["Hb","Leukosit","Kreatinin","Trombosit","SGOT"],a:2}
-
 ]
 
-
-window.login=async function(){
+window.login = async function(){
 
 let nik=document.getElementById("nik").value
 let pass=document.getElementById("password").value
 
 document.getElementById("loading").innerHTML='<div class="spinner"></div>'
 
-// LOGIN ADMIN
 if(nik=="admin" && pass=="admin123"){
 window.location="admin.html"
 return
 }
 
-// LOGIN PESERTA
 if(pass!="123"){
 toast("Password salah")
 document.getElementById("loading").innerHTML=""
@@ -363,8 +411,6 @@ showQuestion()
 
 }
 
-}
-
 function showQuestion(){
 
 if(currentQuestion>=questions.length){
@@ -380,16 +426,23 @@ document.getElementById("bar").style.width=percent+"%"
 let html="<div class='question'><b>Soal "+(currentQuestion+1)+"</b><br>"+q.q+"</div>"
 
 q.o.forEach((opt,i)=>{
-
 html+=`<div class="option" onclick="answer(${i})">${opt}</div>`
-
 })
 
-document.getElementById("questionBox").innerHTML=html
+const box=document.getElementById("questionBox")
+
+box.style.opacity=0
+
+setTimeout(()=>{
+box.innerHTML=html
+box.style.opacity=1
+},200)
 
 }
 
 window.answer=function(i){
+
+document.getElementById("clickSound").play()
 
 if(i==questions[currentQuestion].a){
 score++
@@ -406,24 +459,26 @@ async function finishQuiz(){
 let percent=(score/10)*100
 
 await set(ref(db,"result/"+currentUser),{
-
 nama:currentName,
 score:percent
-
 })
 
 let status=percent>=60?"LULUS":"TIDAK LULUS"
 
+if(percent>=60){
+confetti({
+particleCount:150,
+spread:80,
+origin:{y:0.6}
+})
+}
+
 document.getElementById("questionBox").innerHTML=
 
 `<div class="scoreBox">
-
 <h2>Quiz Selesai</h2>
-
 <h1>${percent}</h1>
-
 <h3>${status}</h3>
-
 </div>`
 
 }
