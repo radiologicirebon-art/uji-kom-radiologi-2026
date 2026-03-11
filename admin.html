@@ -4,13 +4,19 @@
 
 <title>Dashboard Admin UKOM Radiografer</title>
 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2785/2785544.png">
+
 <style>
 
 body{
 font-family:Arial;
 background:#0f2027;
 color:white;
-text-align:center
+text-align:center;
+margin:0;
+padding:20px
 }
 
 table{
@@ -18,7 +24,8 @@ margin:auto;
 margin-top:30px;
 border-collapse:collapse;
 background:white;
-color:black
+color:black;
+min-width:400px
 }
 
 th,td{
@@ -26,8 +33,13 @@ padding:10px 20px;
 border:1px solid #ccc
 }
 
+th{
+background:#1f4e79;
+color:white
+}
+
 h1{
-margin-top:30px
+margin-top:20px
 }
 
 </style>
@@ -38,12 +50,15 @@ margin-top:30px
 <h1>Dashboard Hasil UKOM Radiografer</h1>
 
 <table id="table">
+<thead>
 <tr>
 <th>NIK</th>
 <th>Nama</th>
 <th>Score</th>
 <th>Status</th>
 </tr>
+</thead>
+<tbody id="tbody"></tbody>
 </table>
 
 
@@ -61,16 +76,16 @@ projectId:"uji-kom-79ed4"
 const app=initializeApp(firebaseConfig)
 const db=getDatabase(app)
 
-const table=document.getElementById("table")
+const tbody=document.getElementById("tbody")
 
 onValue(ref(db,"result"),(snap)=>{
 
-table.innerHTML=`<tr>
-<th>NIK</th>
-<th>Nama</th>
-<th>Score</th>
-<th>Status</th>
-</tr>`
+tbody.innerHTML=""
+
+if(!snap.exists()){
+tbody.innerHTML="<tr><td colspan='4'>Belum ada peserta</td></tr>"
+return
+}
 
 snap.forEach(data=>{
 
@@ -86,7 +101,7 @@ let row=`
 </tr>
 `
 
-table.innerHTML+=row
+tbody.innerHTML+=row
 
 })
 
