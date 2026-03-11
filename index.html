@@ -324,14 +324,30 @@ let pass=document.getElementById("password").value
 
 document.getElementById("loading").innerHTML='<div class="spinner"></div>'
 
-if(pass!="123"){toast("Password salah");return}
+// LOGIN ADMIN
+if(nik=="admin" && pass=="admin123"){
+window.location="admin.html"
+return
+}
 
-if(!users[nik]){toast("NIK tidak terdaftar");return}
+// LOGIN PESERTA
+if(pass!="123"){
+toast("Password salah")
+document.getElementById("loading").innerHTML=""
+return
+}
+
+if(!users[nik]){
+toast("NIK tidak terdaftar")
+document.getElementById("loading").innerHTML=""
+return
+}
 
 const snapshot=await get(child(ref(db),"result/"+nik))
 
 if(snapshot.exists()){
-toast("Anda sudah ikut kuis")
+toast("Anda sudah mengikuti ujian")
+document.getElementById("loading").innerHTML=""
 return
 }
 
@@ -344,6 +360,8 @@ document.getElementById("quizBox").style.display="block"
 document.getElementById("welcome").innerHTML="Halo "+currentName
 
 showQuestion()
+
+}
 
 }
 
